@@ -1,10 +1,8 @@
-FROM ruby:2.7-alpine
-
-RUN echo 'http://dl-4.alpinelinux.org/alpine/v3.15/main' >> /etc/apk/repositories
+FROM ruby:3.4-alpine
 
 RUN set -x -e; \
     apk add --update --no-cache bash make g++; \
-    gem install package_cloud
+    gem install package_cloud -v 0.3.15
 
 ADD entrypoint /usr/local/bin/entrypoint
 CMD ["/usr/local/bin/entrypoint"]

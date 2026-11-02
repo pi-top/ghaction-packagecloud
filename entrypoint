@@ -49,5 +49,14 @@ fi
 # Upload each file separately to support multiple file types
 for file in "${files[@]}"; do
     echo Pushing "${file}" to "${user}/${repository}"
-    package_cloud push "${user}/$repository" "${file}" 2>&1
+    if ! output=$(package_cloud push "${user}/$repository" "${file}" 2>&1); then
+        echo "$output"
+        # A version already in the repo cannot be replaced; keep the published one
+        if grep -q "has already been taken" <<<"$output"; then
+            echo "::warning::${file##*/} is already in ${user}/${repository}; keeping the published copy"
+            continue
+        fi
+        exit 1
+    fi
+    echo "$output"
 done
